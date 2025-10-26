@@ -1,0 +1,530 @@
+/*-------основное оформление сайта--------*/
+@import url('https://fonts.googleapis.com/css2?family=Train+One&display=swap');
+
+html {
+    background-color: black;
+    color: white;
+}
+
+.container {
+    display: grid;
+    max-width: 1440px;
+    margin: 0 auto;
+    grid-template-columns: 4fr 1fr;
+    grid-template-rows: auto auto auto auto;
+    grid-template-areas: 
+        "header header"
+        "main nav"
+        "footer footer";
+}
+
+.name_color {
+  font-family: "Train One", system-ui;
+  font-weight: 400;
+  font-style: normal;
+  color: #8b00ff;
+  align-self: center;
+}
+
+header {grid-area: header;}
+main {grid-area: main;}
+nav {grid-area: nav;}
+footer {grid-area: footer;}
+
+.name {margin-left: 5%;}
+
+a {text-decoration: none;}
+a:link{color: #8b00ff;}
+a:visited {color: #8b00ff;}
+a:hover{color: #bd6dff;}
+a:active{color: #470082;}
+
+ul {list-style-type: none}
+
+p {text-indent: 3%;}
+
+/* --------header--------- */
+
+.container_head {
+    display: grid;
+    grid-template-columns: auto auto;
+}
+
+.container_page {
+    display: grid;
+    grid-template-columns: auto auto auto auto auto;
+}
+
+.container_log {
+    display: grid;
+    grid-template-columns: auto 2fr;
+}
+
+.heada {
+    align-self: center;
+    font-size: 150%;
+}
+
+/* ---------nav----------- */
+
+.container_nav {
+    display: grid;
+    grid-template-rows: 1fr auto auto auto auto auto;
+    gap: 3%;
+    padding: 8%;
+}
+
+/* --------main----------- */
+
+/* контейнеры */
+.container_tm {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1%;
+    margin: 5%;
+}
+
+.container_fact {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto;
+    margin: 5%;
+    grid-gap: 3%;
+    row-gap: 10%;
+}
+
+.container_info {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 1%;
+    margin: 5%;
+}
+
+.container_infoB {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+    margin: 5%;
+    align-items: center;
+}
+
+/* содержание контейнеров */
+.text-section {padding: 5%;}
+
+.text-section p, .text-section h1, .text-section h2 {
+    border-bottom: 1px solid white;
+    padding-bottom: 5%;
+    margin-bottom: 5%;
+}
+
+.img-section img, .vid-section video {width: 100%;}
+
+/* --------footer----------- */
+
+.container_foot {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    margin-left: 5%;
+    margin-bottom: 5%;
+    grid-gap: 3%;
+}
+
+.social-buttons {
+    display: flex;
+    gap: 5%;
+}
+        
+.social-btn {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #333;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+}
+        
+.social-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--color);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+        
+.social-btn:hover::before {
+    opacity: 1;
+}
+        
+.social-icon {
+    position: relative;
+    font-size: 100%;
+    color: white;
+}
+        
+.youtube { --color: #FF0000; }
+.vk { --color: #0077FF; }
+.ok { --color: #EE8208; }
+
+/* -------звездное небо------------ */
+
+#stars-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    will-change: transform; /* Оптимизация для анимаций */
+}
+
+.star {
+    position: absolute;
+    background-color: white;
+    border-radius: 50%;
+    animation: twinkle linear infinite;
+    will-change: transform; /* Оптимизация для анимаций */
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+/* Дополнительные стили для разных слоев параллакса */
+.star[data-layer="1"] {
+    background-color: #ffffff; /* Яркие звезды переднего плана */
+}
+
+.star[data-layer="2"] {
+    background-color: #cccccc; /* Звезды среднего плана */
+}
+
+.star[data-layer="3"] {
+    background-color: #999999; /* Тусклые звезды заднего плана */
+}
+
+/* -------карты с текстом---------- */
+
+.cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    margin: 0 auto;
+    margin-left: 5%;
+}
+
+.card {
+    overflow: hidden;
+    position: relative;
+}
+
+.card-text {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: black;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+        
+.card:hover .card-text {
+    transform: translateY(0);
+}
+        
+.card-title {
+    font-weight: bold;
+    margin-bottom: 5%;
+    font-size: 200%;
+}
+
+.card img {
+    width: 100%;
+    height: 100%;
+}
+
+.card-desc {
+    line-height: 1.4;
+}
+
+/* -----телескоп------- */
+
+.container-telescope {
+    width: 90%;
+    text-align: center;
+}
+
+.telescope-container {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    border-radius: 5%;
+    overflow: hidden;
+    background: #000;
+    margin: 0 auto 20px;
+    border: 2px solid #4a6ee0;
+    box-shadow: 0 0 20px rgba(74, 110, 224, 0.5);
+}
+
+#starfield {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#telescope {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 30px rgba(100, 150, 255, 0.7);
+    pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
+    display: none;
+}
+
+#telescope-view {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2%;
+}
+
+/* -----кнопки------- */
+
+button {
+    width: 80px;
+    height: 30px;
+    background-color: #8B00FF; 
+    color: white;
+    border-radius: 10%;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+
+button:active {
+    background-color: #4B0082; 
+    z-index: 1000; 
+}
+
+/* Скрываем чекбокс */
+#burger-toggle {
+    display: none;
+}
+
+/* Бургер-иконка */
+.burger-icon {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    padding: 10px;
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 100;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.burger-line {
+    width: 20px;
+    height: 2px;
+    background: #333;
+    margin: 2px 0;
+    transition: 0.3s;
+}
+
+#booksContainer {padding-right: 5%;}
+
+/* Основное меню */
+.menu {
+    display: flex;
+    gap: 15px;
+    padding: 10px;
+}
+
+.menu a {
+    padding: 8px 15px;
+    text-decoration: none;
+    color: #333;
+    border-radius: 4px;
+}
+
+.menu a:hover {
+    background: black;
+}
+
+#burger-toggle {
+    display: none;
+}
+
+.burger-icon {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    padding: 10px;
+    margin: 3%;
+    z-index: 100;
+    justify-self: end;
+    align-self: center;
+}
+
+.burger-line {
+    width: 25px;
+    height: 3px;
+    background: #333;
+    margin: 3px 0;
+    transition: 0.3s;
+}
+
+/* ---------адаптация------------ */
+
+@media (max-width: 500px){
+    .icon {
+        display: none;
+    }
+
+    .container {
+        display: grid;
+        margin: 0 auto;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto;
+        grid-template-areas: 
+            "header"
+            "nav"
+            "main"
+            "footer";
+    }
+
+    .container_tm {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr;
+        margin: 5%;
+    }
+
+    .container_fact {
+        padding-bottom: 7%;
+    }
+
+    .container_info {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto;
+        margin: 5%;
+    }
+
+    .img-section {max-width: 100%;}
+
+    #name1 {grid-area: name1;}
+    #info1 {grid-area: info1;}
+    #name2 {grid-area: name2;}
+    #info2 {grid-area: info2;}
+
+    .container_foot {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto;
+        grid-template-areas: 
+            "name1"
+            "info1"
+            "name2"
+            "info2";
+        margin-left: 5%;
+        margin-bottom: 5%;
+        grid-gap: 3%;
+        padding-bottom: 5%;
+    }
+
+    .cards {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        margin: 0 auto;
+        margin-left: 5%;
+    }
+
+    .container_infoB {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto auto auto auto auto auto auto;
+        align-items: center;
+    }
+
+    .burger-icon {
+        display: flex;
+        grid-column: 2;
+    }
+
+    .container_page {
+        display: none;
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 250px;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.528);
+        grid-template-columns: 1fr;
+        grid-auto-rows: auto;
+        align-content: start;
+        padding-top: 80px;
+        box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+        z-index: 99;
+    }
+
+    .container_page .heada {
+        padding: 15px 20px;
+        margin: 5px 15px;
+        border-radius: 5px;
+        text-align: left;
+        font-size: 18px;
+        background: rgba(255, 255, 255, 0.927);
+    }
+
+    .container_page .heada:hover {
+        background: #e9ecef;
+    }
+
+    #burger-toggle:checked ~ .container_page {
+        display: grid;
+    }
+
+    #burger-toggle:checked ~ .burger-icon .burger-line:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    #burger-toggle:checked ~ .burger-icon .burger-line:nth-child(2) {
+        opacity: 0;
+    }
+
+    #burger-toggle:checked ~ .burger-icon .burger-line:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -6px);
+    }
+
+    .container_head {
+        grid-template-columns: 1fr auto;
+        align-items: center;
+    }
+}

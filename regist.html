@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <link rel="icon" href="img/Fan.png" sizes="any">
+    <link rel="stylesheet" href="regist-style.css">
+</head>
+<body>
+    <div id="stars-container"></div>
+    
+    <div class="form-container">
+        <h2>Регистрация</h2>
+        <form class="form-grid">
+            <div class="input-group field-name">
+                <label for="name">Имя</label>
+                <input type="text" id="name" required>
+            </div>
+            
+            <div class="input-group field-surname">
+                <label for="surname">Фамилия</label>
+                <input type="text" id="surname" required>
+            </div>
+            
+            <div class="input-group field-email">
+                <label for="email">Email</label>
+                <input type="email" id="email" required>
+            </div>
+            
+            <div class="input-group field-phone">
+                <label for="phone">Телефон</label>
+                <input type="tel" id="phone" required>
+            </div>
+            
+            <div class="input-group full-width field-password">
+                <label for="password">Пароль</label>
+                <input type="password" id="password" required>
+            </div>
+            
+            <div class="input-group full-width field-confirm">
+                <label for="confirm">Подтвердите пароль</label>
+                <input type="password" id="confirm" required>
+            </div>
+            
+            <div class="terms-group full-width field-terms">
+                <input type="checkbox" id="terms" required>
+                <label for="terms">Я принимаю условия соглашения</label>
+            </div>
+            
+            <div class="captcha">
+                <div id="captchaText" style="font-weight: bold; margin-bottom: 10px;"></div>
+                <input type="text" id="userInput" placeholder="Введите ответ">
+            </div>
+            <button id="submitBtn" disabled>Отправить</button>
+            <script src="codes/capcha.js"></script>
+
+            <button type="submit" class="full-width field-submit">Зарегистрироваться</button>
+            
+            <div class="login-link full-width field-login">
+                Уже есть аккаунт? <a href="home.html">Войти</a>
+            </div>
+        </form>
+        </div>
+        <div id="message"></div>
+        <script src="codes/esornot.js"></script>
+    </div>
+    <script src="codes/stars.js"></script>
+</body>
+</html>

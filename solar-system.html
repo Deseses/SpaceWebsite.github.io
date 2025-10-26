@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Астероиды и Кометы</title>
+    <link rel="icon" href="img/Fan.png" sizes="any">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 10px 0;
+            background: rgba(0, 0, 0, 0.7); 
+        }
+        
+        .container_head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            color: white;
+        }
+        
+        .container_log {
+            display: flex;
+            align-items: center;
+        }
+        
+        .heada {
+            margin-left: 15px;
+            padding: 5px 10px;
+        }
+        
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container_head">
+            <div class="container_log">
+                <img src="img/Logo.png">
+                <h1 class="name_color icon">Астероиды и Кометы</h1>
+            </div>
+
+            <input type="checkbox" id="burger-toggle">
+            <label for="burger-toggle" class="burger-icon">
+                <div class="burger-line"></div>
+                <div class="burger-line"></div>
+                <div class="burger-line"></div>
+            </label>
+
+            <div class="container_page">
+                <a href="home.html" class="heada">Главная</a>
+                <a href="asteroid.html" class="heada">Астероиды</a>
+                <a href="kometa.html" class="heada">Кометы</a>
+                <a href="solar-system.html" class="heada">СС</a>
+                <a href="regist.html" class="heada">Вход</a>
+            </div>
+        </div>
+    </header>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    <script src="codes/solar-system.js"></script>
+</body>
+</html>
