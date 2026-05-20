@@ -1,44 +1,84 @@
-// Инициализация сцены, камеры и рендерера
+/**
+ * @module solar-system
+ * @description Модуль для создания интерактивной 3D модели Солнечной системы
+ * Включает Солнце, 8 планет с орбитами, пояс астероидов и Облако Оорта
+ * Использует Three.js для рендеринга и OrbitControls для управления камерой
+ */
+
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+
+/**
+ * Сцена Three.js
+ * @constant {THREE.Scene}
+ */
 const scene = new THREE.Scene();
+
+/**
+ * Камера для просмотра Солнечной системы
+ * @constant {THREE.PerspectiveCamera}
+ * @property {number} fov - 75 градусов
+ */
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+
+/**
+ * WebGL рендерер
+ * @constant {THREE.WebGLRenderer}
+ * @property {boolean} antialias - Включено сглаживание
+ */
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 
-// Устанавливаем размер рендерера точно по размеру окна
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
-
-// Добавляем canvas после header
 document.body.appendChild(renderer.domElement);
 
-// Добавление контроля камеры
-const controls = new THREE.OrbitControls(camera, renderer.domElement);
+/**
+ * Орбитальные контроллы для управления камерой
+ * @constant {OrbitControls}
+ * @property {boolean} enableDamping - Включена инерция
+ * @property {number} dampingFactor - Фактор инерции (0.05)
+ */
+const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
 
-// Настройка камеры
 camera.position.set(0, 30, 80);
 controls.update();
 
-// Добавление освещения
+/**
+ * Фоновое освещение сцены
+ * @constant {THREE.AmbientLight}
+ */
 const ambientLight = new THREE.AmbientLight(0x333333);
 scene.add(ambientLight);
 
-// Создание небесных тел
+/**
+ * Загрузчик текстур
+ * @constant {THREE.TextureLoader}
+ */
 const textureLoader = new THREE.TextureLoader();
 
-// Солнце с собственным свечением
+/**
+ * Модель Солнца
+ * @constant {THREE.Mesh}
+ */
 const sunGeometry = new THREE.SphereGeometry(5, 32, 32);
-const sunMaterial = new THREE.MeshBasicMaterial({
-    color: 0xffffff
-});
+const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
 const sun = new THREE.Mesh(sunGeometry, sunMaterial);
 scene.add(sun);
 
-// Свет от Солнца
+/**
+ * Источник света от Солнца
+ * @constant {THREE.PointLight}
+ * @property {number} intensity - 2
+ */
 const sunLight = new THREE.PointLight(0xffd700, 2, 300);
 scene.add(sunLight);
 
-// Свечение Солнца
+/**
+ * Свечение Солнца (полупрозрачная сфера)
+ * @constant {THREE.Mesh}
+ */
 const sunGlowGeometry = new THREE.SphereGeometry(5.5, 32, 32);
 const sunGlowMaterial = new THREE.MeshBasicMaterial({
     color: 0xff4500,
@@ -48,7 +88,15 @@ const sunGlowMaterial = new THREE.MeshBasicMaterial({
 const sunGlow = new THREE.Mesh(sunGlowGeometry, sunGlowMaterial);
 scene.add(sunGlow);
 
-// Планеты с их орбитами
+/**
+ * Массив данных о планетах
+ * @constant {Array<Object>} planets
+ * @property {string} name - Название планеты
+ * @property {number} radius - Радиус в условных единицах
+ * @property {number} distance - Расстояние от Солнца
+ * @property {number} speed - Скорость вращения по орбите
+ * @property {number} color - Цвет в hex-формате
+ */
 const planets = [
     { name: "Меркурий", radius: 0.4, distance: 7, speed: 0.04, color: 0x8C7853 },
     { name: "Венера", radius: 0.9, distance: 11, speed: 0.015, color: 0xE6CDB1 },
@@ -60,15 +108,25 @@ const planets = [
     { name: "Нептун", radius: 1.2, distance: 55, speed: 0.0001, color: 0x3E66F9 }
 ];
 
+/**
+ * Массив мешей планет с их параметрами орбит
+ * @type {Array<Object>}
+ */
 const planetMeshes = [];
 
+/**
+ * Создает планеты и их орбиты
+ * @function createPlanets
+ * @description Для каждой планеты создает:
+ *              - Сферический меш планеты
+ *              - Кольцевую орбиту
+ *              - Сохраняет параметры движения
+ */
 planets.forEach(planet => {
-    // Создание планеты
     const geometry = new THREE.SphereGeometry(planet.radius, 32, 32);
     const material = new THREE.MeshLambertMaterial({ color: planet.color });
     const mesh = new THREE.Mesh(geometry, material);
     
-    // Создание орбиты
     const orbitGeometry = new THREE.RingGeometry(planet.distance - 0.1, planet.distance + 0.1, 64);
     const orbitMaterial = new THREE.MeshBasicMaterial({ 
         color: 0xFFFFFF, 
@@ -80,7 +138,6 @@ planets.forEach(planet => {
     orbit.rotation.x = Math.PI / 2;
     scene.add(orbit);
     
-    // Начальная позиция планеты
     mesh.position.x = planet.distance;
     scene.add(mesh);
     
@@ -92,7 +149,10 @@ planets.forEach(planet => {
     });
 });
 
-// Кольца Сатурна
+/**
+ * Кольца Сатурна
+ * @constant {THREE.Mesh}
+ */
 const saturnRingGeometry = new THREE.RingGeometry(2.2, 3.5, 32);
 const saturnRingMaterial = new THREE.MeshBasicMaterial({ 
     color: 0xE3CFA9, 
@@ -104,14 +164,19 @@ const saturnRing = new THREE.Mesh(saturnRingGeometry, saturnRingMaterial);
 saturnRing.rotation.x = Math.PI / 2;
 planetMeshes[5].mesh.add(saturnRing);
 
-// Создание круглой текстуры для спрайтов
+/**
+ * Создает круглую текстуру для спрайтов
+ * @function createCircleTexture
+ * @param {string} color - Цвет в hex или rgba формате
+ * @param {number} [size=64] - Размер текстуры в пикселях
+ * @returns {THREE.CanvasTexture} Текстура с круглым градиентом
+ */
 function createCircleTexture(color, size = 64) {
     const canvas = document.createElement('canvas');
     canvas.width = size;
     canvas.height = size;
     const context = canvas.getContext('2d');
     
-    // Градиент для круглой формы
     const gradient = context.createRadialGradient(
         size/2, size/2, 0,
         size/2, size/2, size/2
@@ -128,21 +193,27 @@ function createCircleTexture(color, size = 64) {
     return new THREE.CanvasTexture(canvas);
 }
 
-// Главный пояс астероидов с круглыми спрайтами
-const asteroidCount = 300;
-const asteroidSprites = [];
-
-// Текстуры для астероидов разных цветов
+/**
+ * Текстуры для астероидов разных цветов
+ * @constant {Array<THREE.CanvasTexture>}
+ */
 const asteroidTextures = [
-    createCircleTexture('#8C7853'), // коричневый
-    createCircleTexture('#A0522D'), // землистый
-    createCircleTexture('#696969'), // серый
-    createCircleTexture('#8B4513')  // коричневый
+    createCircleTexture('#8C7853'),
+    createCircleTexture('#A0522D'),
+    createCircleTexture('#696969'),
+    createCircleTexture('#8B4513')
 ];
+
+/**
+ * Пояс астероидов между Марсом и Юпитером
+ * @type {Array<Object>}
+ */
+const asteroidSprites = [];
+const asteroidCount = 300;
 
 for (let i = 0; i < asteroidCount; i++) {
     const angle = Math.random() * Math.PI * 2;
-    const distance = 22 + Math.random() * 5; // Между Марсом и Юпитером
+    const distance = 22 + Math.random() * 5;
     const height = (Math.random() - 0.5) * 2;
     
     const spriteMaterial = new THREE.SpriteMaterial({
@@ -158,7 +229,6 @@ for (let i = 0; i < asteroidCount; i++) {
         Math.sin(angle) * distance
     );
     
-    // Разный размер астероидов
     const size = 0.3 + Math.random() * 0.4;
     sprite.scale.set(size, size, 1);
     
@@ -172,24 +242,25 @@ for (let i = 0; i < asteroidCount; i++) {
     });
 }
 
-// Облако Оорта - повернуто на 90 градусов (сбоку)
-const oortCloudCount = 30000;
-const oortCloudSprites = [];
-
-// Текстуры для комет Облака Оорта
+/**
+ * Текстуры для объектов Облака Оорта
+ * @constant {Array<THREE.CanvasTexture>}
+ */
 const oortTextures = [
-    createCircleTexture('#87CEEB'), // голубой
-    createCircleTexture('#B0E0E6'), // пудрово-голубой
-    createCircleTexture('#E0FFFF'), // светло-голубой
-    createCircleTexture('#AFEEEE'), // бирюзовый
-    createCircleTexture('#ADD8E6')  // светло-голубой
+    createCircleTexture('#87CEEB'),
+    createCircleTexture('#B0E0E6'),
+    createCircleTexture('#E0FFFF'),
+    createCircleTexture('#AFEEEE'),
+    createCircleTexture('#ADD8E6')
 ];
 
-console.log("Создание бокового Облака Оорта...");
-
-// Создаем группы объектов для оптимизации
+/**
+ * Облако Оорта (боковое) - скопление ледяных объектов на границе системы
+ * @type {Array<THREE.Points>}
+ */
 const oortGroups = [];
 const objectsPerGroup = 1000;
+const oortCloudCount = 30000;
 
 for (let group = 0; group < oortCloudCount / objectsPerGroup; group++) {
     const geometry = new THREE.BufferGeometry();
@@ -200,19 +271,15 @@ for (let group = 0; group < oortCloudCount / objectsPerGroup; group++) {
         const index = group * objectsPerGroup + i;
         if (index >= oortCloudCount) break;
         
-        // Полусферическое распределение повернутое на 90 градусов (сбоку)
-        // Теперь полусфера направлена вдоль оси X (вправо)
         const theta = Math.random() * Math.PI * 2;
-        const phi = Math.random() * Math.PI / 2; // Только половина сферы
+        const phi = Math.random() * Math.PI / 2;
         const radius = 80 + Math.random() * 120;
         
         const posIndex = i * 3;
-        // Поворот на 90 градусов: меняем оси Y и X
-        positions[posIndex] = radius * Math.cos(phi);       // X - основное направление полусферы
-        positions[posIndex + 1] = radius * Math.sin(phi) * Math.sin(theta); // Y
-        positions[posIndex + 2] = radius * Math.sin(phi) * Math.cos(theta); // Z
+        positions[posIndex] = radius * Math.cos(phi);
+        positions[posIndex + 1] = radius * Math.sin(phi) * Math.sin(theta);
+        positions[posIndex + 2] = radius * Math.sin(phi) * Math.cos(theta);
         
-        // Случайный голубой цвет
         colors[posIndex] = 0.5 + Math.random() * 0.3;
         colors[posIndex + 1] = 0.6 + Math.random() * 0.3;
         colors[posIndex + 2] = 0.8 + Math.random() * 0.2;
@@ -234,7 +301,10 @@ for (let group = 0; group < oortCloudCount / objectsPerGroup; group++) {
     oortGroups.push(points);
 }
 
-// Дополнительный внешний слой для большей глубины
+/**
+ * Внешний слой Облака Оорта для большей глубины
+ * @constant {THREE.Points}
+ */
 const outerOortCount = 10000;
 const outerOortGeometry = new THREE.BufferGeometry();
 const outerPositions = new Float32Array(outerOortCount * 3);
@@ -245,7 +315,6 @@ for (let i = 0; i < outerOortCount; i++) {
     const phi = Math.random() * Math.PI / 2;
     const radius = 150 + Math.random() * 200;
     
-    // Поворот на 90 градусов для внешнего слоя
     outerPositions[i * 3] = radius * Math.cos(phi);
     outerPositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
     outerPositions[i * 3 + 2] = radius * Math.sin(phi) * Math.cos(theta);
@@ -270,19 +339,18 @@ const outerOortCloud = new THREE.Points(outerOortGeometry, outerOortMaterial);
 scene.add(outerOortCloud);
 oortGroups.push(outerOortCloud);
 
-console.log("Боковое Облака Оорта создано: " + (oortCloudCount + outerOortCount) + " объектов");
-
-// Звездное небо с круглыми звездами
-const starCount = 5000;
+/**
+ * Звездное небо (фон)
+ * @type {Array<THREE.Sprite>}
+ */
 const starSprites = [];
-
-// Текстуры для звезд разных цветов
+const starCount = 5000;
 const starTextures = [
-    createCircleTexture('#FFFFFF'), // белый
-    createCircleTexture('#FFFAF0'), // бежевый
-    createCircleTexture('#F0F8FF'), // голубоватый
-    createCircleTexture('#FFF8DC'), // кремовый
-    createCircleTexture('#FFE4E1')  // розоватый
+    createCircleTexture('#FFFFFF'),
+    createCircleTexture('#FFFAF0'),
+    createCircleTexture('#F0F8FF'),
+    createCircleTexture('#FFF8DC'),
+    createCircleTexture('#FFE4E1')
 ];
 
 for (let i = 0; i < starCount; i++) {
@@ -299,7 +367,6 @@ for (let i = 0; i < starCount; i++) {
     const sprite = new THREE.Sprite(spriteMaterial);
     sprite.position.set(x, y, z);
     
-    // Разный размер звезд
     const size = 0.8 + Math.random() * 1.2;
     sprite.scale.set(size, size, 1);
     
@@ -307,15 +374,21 @@ for (let i = 0; i < starCount; i++) {
     starSprites.push(sprite);
 }
 
-// Анимация
+/**
+ * Анимационный цикл
+ * @function animate
+ * @description Обновляет:
+ *              - Вращение Солнца и его свечения
+ *              - Положения планет на орбитах
+ *              - Положения астероидов
+ *              - Вращение Облака Оорта
+ */
 function animate() {
     requestAnimationFrame(animate);
     
-    // Вращение Солнца и его свечения
     sun.rotation.y += 0.001;
     sunGlow.rotation.y += 0.0005;
     
-    // Движение планет по орбитам
     planetMeshes.forEach(planet => {
         planet.angle += planet.speed;
         planet.mesh.position.x = Math.cos(planet.angle) * planet.distance;
@@ -323,17 +396,13 @@ function animate() {
         planet.mesh.rotation.y += 0.01;
     });
     
-    // Движение астероидов
     asteroidSprites.forEach(asteroid => {
         asteroid.angle += asteroid.speed;
         asteroid.sprite.position.x = Math.cos(asteroid.angle) * asteroid.distance;
         asteroid.sprite.position.z = Math.sin(asteroid.angle) * asteroid.distance;
-        
-        // Легкое колебание по высоте
         asteroid.sprite.position.y = asteroid.height + Math.sin(asteroid.angle * 3) * 0.5;
     });
     
-    // Медленное вращение Облака Оорта вокруг оси Y
     oortGroups.forEach(group => {
         group.rotation.y += 0.00001;
     });
@@ -342,7 +411,11 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-// Обработка изменения размера окна
+/**
+ * Обработчик изменения размера окна
+ * @function onWindowResize
+ * @description Адаптирует камеру и рендерер под новый размер окна
+ */
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();

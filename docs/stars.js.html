@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: stars.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: stars.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module stars
+ * @description Модуль для создания анимированного звездного фона с эффектом параллакса
+ * Создает мерцающие звезды, которые двигаются с разной скоростью при прокрутке страницы
+ */
+
+/**
+ * Создает звезды на фоне страницы
+ * @function createStars
+ * @description Генерирует 200 звезд со случайными:
+ *              - Размером (1-3 пикселя)
+ *              - Позицией на экране
+ *              - Задержкой анимации мерцания
+ *              - Слоем параллакса (1-3)
+ *              - Длительностью анимации
+ */
+function createStars() {
+    const container = document.getElementById('stars-container');
+    const starCount = 200;
+            
+    container.innerHTML = '';
+            
+    for (let i = 0; i &lt; starCount; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        
+        const size = Math.random() * 2 + 1;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+                
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top = `${Math.random() * 100}%`;
+                
+        star.style.animationDelay = `${Math.random() * 3}s`;
+        star.style.animationDuration = `${Math.random() * 2 + 2}s`;
+        
+        const parallaxLayer = Math.floor(Math.random() * 3) + 1;
+        star.setAttribute('data-layer', parallaxLayer);
+        star.style.zIndex = parallaxLayer;
+                
+        container.appendChild(star);
+    }
+    
+    initParallax();
+}
+
+/**
+ * Инициализирует эффект параллакса для звезд
+ * @function initParallax
+ * @description При прокрутке страницы звезды разных слоев
+ *              двигаются с разной скоростью, создавая эффект глубины
+ */
+function initParallax() {
+    const stars = document.querySelectorAll('.star');
+    
+    window.addEventListener('scroll', function() {
+        const scrolled = window.pageYOffset;
+        const rate = scrolled * -0.5;
+        
+        stars.forEach(star => {
+            const layer = parseInt(star.getAttribute('data-layer'));
+            const speed = rate * (layer / 3);
+            star.style.transform = `translateY(${speed}px)`;
+        });
+    });
+}
+
+/**
+ * Обработчик изменения размера окна с дебаунсом
+ * @function handleResize
+ * @description Пересоздает звезды при изменении размера окна для корректного отображения
+ */
+function handleResize() {
+    createStars();
+}
+
+/**
+ * Создает эффект параллакса для контейнера звезд
+ * @function initContainerParallax
+ * @description Контейнер со звездами двигается медленнее,
+ *              чем остальной контент, создавая глубину
+ */
+function initContainerParallax() {
+    const container = document.getElementById('stars-container');
+    if (!container) return;
+    
+    window.addEventListener('scroll', function() {
+        const scrolled = window.pageYOffset;
+        container.style.transform = `translateY(${scrolled * 0.3}px)`;
+    });
+}
+
+// Инициализация звезд при полной загрузке страницы
+window.addEventListener('load', createStars);
+
+/**
+ * Дебаунс для обработки изменения размера окна
+ * @type {number|null}
+ */
+let resizeTimeout;
+
+/**
+ * Обработчик изменения размера окна с задержкой
+ * @event window#resize
+ */
+window.addEventListener('resize', function() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(handleResize, 250);
+});
+
+window.addEventListener('load', function() {
+    initContainerParallax();
+});</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-3dasteroid.html">3dasteroid</a></li><li><a href="module-3dkomet.html">3dkomet</a></li><li><a href="module-book.html">book</a></li><li><a href="module-capcha.html">capcha</a></li><li><a href="module-solar-system.html">solar-system</a></li><li><a href="module-stars.html">stars</a></li><li><a href="module-telescope.html">telescope</a></li><li><a href="module-textcart.html">textcart</a></li></ul><h3>Events</h3><ul><li><a href="canvas.html#event:mouseenter">mouseenter</a></li><li><a href="canvas.html#event:mouseleave">mouseleave</a></li><li><a href="canvas.html#event:mousemove">mousemove</a></li><li><a href="module-textcart.html#~event:DOMContentLoaded">DOMContentLoaded</a></li><li><a href="showAllBtn.html#event:click">click</a></li><li><a href="showMoreBtn.html#event:click">click</a></li><li><a href="submitBtn.html#event:click">click</a></li><li><a href="userInput.html#event:input">input</a></li><li><a href="window.html#event:resize">resize</a></li><li><a href="zoomInBtn.html#event:click">click</a></li><li><a href="zoomOutBtn.html#event:click">click</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sat May 16 2026 10:44:39 GMT+0300 (Москва, стандартное время)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+/**
+ * @module book
+ * @description Модуль для отображения списка научно-популярных книг о космосе
+ * Поддерживает постраничную загрузку книг и функцию "показать все"
+ */ /**
+ * Массив книг о космосе и астрономии
+ * @constant {Array<Object>} books
+ * @property {string} title - Название книги
+ * @property {string} author - Автор книги
+ * @property {number} year - Год издания
+ */ const books = [
+    {
+        title: "\u041A\u0440\u0430\u0442\u043A\u0430\u044F \u0438\u0441\u0442\u043E\u0440\u0438\u044F \u0432\u0440\u0435\u043C\u0435\u043D\u0438",
+        author: "\u0421\u0442\u0438\u0432\u0435\u043D \u0425\u043E\u043A\u0438\u043D\u0433",
+        year: 2022
+    },
+    {
+        title: "\u041A\u043E\u0441\u043C\u043E\u0441",
+        author: "\u041A\u0430\u0440\u043B \u0421\u0430\u0433\u0430\u043D",
+        year: 2020
+    },
+    {
+        title: "\u0412\u0435\u0440\u043D\u0435\u0440 \u0444\u043E\u043D \u0411\u0440\u0430\u0443\u043D. \u0427\u0435\u043B\u043E\u0432\u0435\u043A, \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u043F\u0440\u043E\u0434\u0430\u043B \u041B\u0443\u043D\u0443",
+        author: "\u0414\u0435\u043D\u043D\u0438\u0441 \u041F\u0438\u0448\u043A\u0435\u0432\u0438\u0447",
+        year: 2011
+    },
+    {
+        title: "\u041A\u043E\u0441\u043C\u043E\u0441 \u042D\u0439\u043D\u0448\u0442\u0435\u0439\u043D\u0430",
+        author: "\u041C\u0438\u0442\u0438\u043E \u041A\u0430\u043A\u0443",
+        year: 2012
+    },
+    {
+        title: "\u0427\u0435\u0440\u043D\u044B\u0435 \u0434\u044B\u0440\u044B \u0438 \u043C\u043E\u043B\u043E\u0434\u044B\u0435 \u0432\u0441\u0435\u043B\u0435\u043D\u043D\u044B\u0435",
+        author: "\u0421\u0442\u0438\u0432\u0435\u043D \u0425\u043E\u043A\u0438\u043D\u0433",
+        year: 2022
+    },
+    {
+        title: "\u0418\u043D\u0442\u0435\u0440\u0441\u0442\u0435\u043B\u043B\u0430\u0440: \u041D\u0430\u0443\u043A\u0430 \u0437\u0430 \u043A\u0430\u0434\u0440\u043E\u043C",
+        author: "\u041A\u0438\u043F \u0421\u0442\u0438\u0432\u0435\u043D \u0422\u043E\u0440\u043D",
+        year: 2022
+    },
+    {
+        title: "\u041E \u0412\u0441\u0435\u043B\u0435\u043D\u043D\u043E\u0439 \u0432 \u0434\u0432\u0443\u0445 \u0441\u043B\u043E\u0432\u0430\u0445",
+        author: "\u0421\u0442\u0438\u0432\u0435\u043D \u0425\u043E\u043A\u0438\u043D\u0433",
+        year: 2017
+    },
+    {
+        title: "\u0413\u043E\u043B\u0443\u0431\u0430\u044F \u0442\u043E\u0447\u043A\u0430. \u041A\u043E\u0441\u043C\u0438\u0447\u0435\u0441\u043A\u043E\u0435 \u0431\u0443\u0434\u0443\u0449\u0435\u0435 \u0447\u0435\u043B\u043E\u0432\u0435\u0447\u0435\u0441\u0442\u0432\u0430",
+        author: "\u041A\u0430\u0440\u043B \u0421\u0430\u0433\u0430\u043D",
+        year: 2018
+    },
+    {
+        title: "\u042D\u043B\u0435\u0433\u0430\u043D\u0442\u043D\u0430\u044F \u0412\u0441\u0435\u043B\u0435\u043D\u043D\u0430\u044F. \u0421\u0443\u043F\u0435\u0440\u0441\u0442\u0440\u0443\u043D\u044B, \u0441\u043A\u0440\u044B\u0442\u044B\u0435 \u0440\u0430\u0437\u043C\u0435\u0440\u043D\u043E\u0441\u0442\u0438 \u0438 \u043F\u043E\u0438\u0441\u043A\u0438 \u043E\u043A\u043E\u043D\u0447\u0430\u0442\u0435\u043B\u044C\u043D\u043E\u0439 \u0442\u0435\u043E\u0440\u0438\u0438",
+        author: "\u0411\u0440\u0430\u0439\u0430\u043D \u0413\u0440\u0438\u043D",
+        year: 2011
+    },
+    {
+        title: "\u0410\u0441\u0442\u0440\u043E\u0444\u0438\u0437\u0438\u043A\u0430 \u0441 \u043A\u043E\u0441\u043C\u0438\u0447\u0435\u0441\u043A\u043E\u0439 \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u044C\u044E",
+        author: "\u041D\u0438\u043B \u0414\u0435\u0433\u0440\u0430\u0441\u0441 \u0422\u0430\u0439\u0441\u043E\u043D",
+        year: 2022
+    },
+    {
+        title: "\u0413\u0438\u043F\u0435\u0440\u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E. \u041D\u0430\u0443\u0447\u043D\u0430\u044F \u043E\u0434\u0438\u0441\u0441\u0435\u044F \u0447\u0435\u0440\u0435\u0437 \u043F\u0430\u0440\u0430\u043B\u043B\u0435\u043B\u044C\u043D\u044B\u0435 \u043C\u0438\u0440\u044B, \u0434\u044B\u0440\u044B \u0432\u043E \u0432\u0440\u0435\u043C\u0435\u043D\u0438 \u0438 \u0434\u0435\u0441\u044F\u0442\u043E\u0435 \u0438\u0437\u043C\u0435\u0440\u0435\u043D\u0438\u0435",
+        author: "\u041C\u0438\u0442\u0438\u043E \u041A\u0430\u043A\u0443",
+        year: 2018
+    },
+    {
+        title: "\u041A\u043E\u0441\u043C\u043E\u0441 \u042D\u0439\u043D\u0448\u0442\u0435\u0439\u043D\u0430. \u041A\u0430\u043A \u043E\u0442\u043A\u0440\u044B\u0442\u0438\u044F \u0410\u043B\u044C\u0431\u0435\u0440\u0442\u0430 \u042D\u0439\u043D\u0448\u0442\u0435\u0439\u043D\u0430 \u0438\u0437\u043C\u0435\u043D\u0438\u043B\u0438 \u043D\u0430\u0448\u0438 \u043F\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043B\u0435\u043D\u0438\u044F \u043E \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u0435 \u0438 \u0432\u0440\u0435\u043C\u0435\u043D\u0438",
+        author: "\u041C\u0438\u0442\u0438\u043E \u041A\u0430\u043A\u0443",
+        year: 2019
+    },
+    {
+        title: "\u0412\u0441\u0451 \u0438\u0437 \u043D\u0438\u0447\u0435\u0433\u043E: \u041A\u0430\u043A \u0432\u043E\u0437\u043D\u0438\u043A\u043B\u0430 \u0412\u0441\u0435\u043B\u0435\u043D\u043D\u0430\u044F",
+        author: "\u041B\u043E\u0440\u0435\u043D\u0441 \u041A\u0440\u0430\u0443\u0441\u0441",
+        year: 2019
+    },
+    {
+        title: "\u0417\u0430\u043D\u0438\u043C\u0430\u0442\u0435\u043B\u044C\u043D\u0430\u044F \u0430\u0441\u0442\u0440\u043E\u043D\u043E\u043C\u0438\u044F",
+        author: "\u042F\u043A\u043E\u0432 \u041F\u0435\u0440\u0435\u043B\u044C\u043C\u0430\u043D",
+        year: 2017
+    },
+    {
+        title: "\u041C\u0438\u0440 \u043C\u043D\u043E\u0436\u0435\u0441\u0442\u0432\u0430 \u043C\u0438\u0440\u043E\u0432. \u0424\u0438\u0437\u0438\u043A\u0438 \u0432 \u043F\u043E\u0438\u0441\u043A\u0430\u0445 \u0438\u043D\u044B\u0445 \u0432\u0441\u0435\u043B\u0435\u043D\u043D\u044B\u0445",
+        author: "\u0410\u043B\u0435\u043A\u0441\u0430\u043D\u0434\u0440 \u0412\u0438\u043B\u0435\u043D\u043A\u0438\u043D",
+        year: 2018
+    },
+    {
+        title: "\u0411\u0438\u0442\u0432\u0430 \u043F\u0440\u0438 \u0447\u0435\u0440\u043D\u043E\u0439 \u0434\u044B\u0440\u0435. \u041C\u043E\u0435 \u0441\u0440\u0430\u0436\u0435\u043D\u0438\u0435 \u0441\u043E \u0421\u0442\u0438\u0432\u0435\u043D\u043E\u043C \u0425\u043E\u043A\u0438\u043D\u0433\u043E\u043C \u0437\u0430 \u043C\u0438\u0440, \u0431\u0435\u0437\u043E\u043F\u0430\u0441\u043D\u044B\u0439 \u0434\u043B\u044F \u043A\u0432\u0430\u043D\u0442\u043E\u0432\u043E\u0439 \u043C\u0435\u0445\u0430\u043D\u0438\u043A\u0438",
+        author: "\u041B\u0435\u043E\u043D\u0430\u0440\u0434 \u0421\u0430\u0441\u0441\u043A\u0438\u043D\u0434",
+        year: 2016
+    },
+    {
+        title: "\u041A\u0430\u043A \u043C\u044B \u0431\u0443\u0434\u0435\u043C \u0436\u0438\u0442\u044C \u043D\u0430 \u041C\u0430\u0440\u0441\u0435",
+        author: "\u0421\u0442\u0438\u0432\u0435\u043D \u041F\u0435\u0442\u0440\u0430\u043D\u0435\u043A",
+        year: 2015
+    },
+    {
+        title: "\u0421\u0443\u043F\u0435\u0440\u043E\u0431\u044A\u0435\u043A\u0442\u044B: \u0417\u0432\u0435\u0437\u0434\u044B \u0440\u0430\u0437\u043C\u0435\u0440\u043E\u043C \u0441 \u0433\u043E\u0440\u043E\u0434",
+        author: "\u0421\u0435\u0440\u0433\u0435\u0439 \u041F\u043E\u043F\u043E\u0432",
+        year: 2024
+    },
+    {
+        title: "\u041F\u0440\u0438\u0440\u043E\u0434\u0430 \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u0430 \u0438 \u0432\u0440\u0435\u043C\u0435\u043D\u0438",
+        author: "\u0420\u043E\u0434\u0436\u0435\u0440 \u041F\u0435\u043D\u0440\u043E\u0443\u0437, \u0421\u0442\u0438\u0432\u0435\u043D \u0425\u043E\u043A\u0438\u043D\u0433",
+        year: 2018
+    },
+    {
+        title: "\u0410\u0441\u0442\u0440\u043E\u0444\u0438\u0437\u0438\u043A\u0430 \u043D\u0430\u0447\u0438\u043D\u0430\u044E\u0449\u0438\u043C: \u043A\u0430\u043A \u043F\u043E\u043D\u044F\u0442\u044C \u0412\u0441\u0435\u043B\u0435\u043D\u043D\u0443\u044E",
+        author: "\u041D\u0438\u043B \u0414\u0435\u0433\u0440\u0430\u0441\u0441 \u0422\u0430\u0439\u0441\u043E\u043D, \u0413\u0440\u0435\u0433\u043E\u0440\u0438 \u041C\u043E\u043D",
+        year: 2019
+    },
+    {
+        title: "\u041F\u0435\u0440\u0432\u044B\u0435 \u0442\u0440\u0438 \u043C\u0438\u043D\u0443\u0442\u044B",
+        author: "\u0421\u0442\u0438\u0432\u0435\u043D \u0412\u0430\u0439\u043D\u0431\u0435\u0440\u0433",
+        year: 2022
+    },
+    {
+        title: "\u0422\u0435\u043E\u0440\u0438\u044F \u0441\u0442\u0440\u0443\u043D \u0438 \u0441\u043A\u0440\u044B\u0442\u044B\u0435 \u0438\u0437\u043C\u0435\u0440\u0435\u043D\u0438\u044F \u0412\u0441\u0435\u043B\u0435\u043D\u043D\u043E\u0439",
+        author: "\u042F\u0443 \u0428\u0438\u043D\u0442\u0430\u043D, \u0421\u0442\u0438\u0432 \u041D\u0430\u0434\u0438\u0441",
+        year: 2016
+    },
+    {
+        title: "\u0421\u043A\u0440\u044B\u0442\u0430\u044F \u0440\u0435\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u044C. \u041F\u0430\u0440\u0430\u043B\u043B\u0435\u043B\u044C\u043D\u044B\u0435 \u043C\u0438\u0440\u044B \u0438 \u0433\u043B\u0443\u0431\u0438\u043D\u043D\u044B\u0435 \u0437\u0430\u043A\u043E\u043D\u044B \u043A\u043E\u0441\u043C\u043E\u0441\u0430",
+        author: "\u0411\u0440\u0430\u0439\u0430\u043D \u0413\u0440\u0438\u043D",
+        year: 2012
+    },
+    {
+        title: "\u041D\u0430\u0448\u0430 \u043C\u0430\u0442\u0435\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0430\u044F \u0432\u0441\u0435\u043B\u0435\u043D\u043D\u0430\u044F. \u0412 \u043F\u043E\u0438\u0441\u043A\u0430\u0445 \u0444\u0443\u043D\u0434\u0430\u043C\u0435\u043D\u0442\u0430\u043B\u044C\u043D\u043E\u0439 \u043F\u0440\u0438\u0440\u043E\u0434\u044B \u0440\u0435\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u0438",
+        author: "\u041C\u0430\u043A\u0441 \u0422\u0435\u0433\u043C\u0430\u0440\u043A",
+        year: 2016
+    },
+    {
+        title: "\u0412\u044B\u0431\u043E\u0440 \u043A\u0430\u0442\u0430\u0441\u0442\u0440\u043E\u0444. \u041E\u0442 \u0433\u0438\u0431\u0435\u043B\u0438 \u0412\u0441\u0435\u043B\u0435\u043D\u043D\u043E\u0439 \u0434\u043E \u044D\u043D\u0435\u0440\u0433\u0435\u0442\u0438\u0447\u0435\u0441\u043A\u043E\u0433\u043E \u043A\u0440\u0438\u0437\u0438\u0441\u0430",
+        author: "\u0410\u0439\u0437\u0435\u043A \u0410\u0437\u0438\u043C\u043E\u0432",
+        year: 2002
+    },
+    {
+        title: "\u0412\u044B \u043D\u0430\u0445\u043E\u0434\u0438\u0442\u0435\u0441\u044C \u0437\u0434\u0435\u0441\u044C. \u041A\u0430\u0440\u043C\u0430\u043D\u043D\u0430\u044F \u0438\u0441\u0442\u043E\u0440\u0438\u044F \u0432\u0441\u0435\u043B\u0435\u043D\u043D\u043E\u0439",
+        author: "\u041A\u0440\u0438\u0441\u0442\u043E\u0444\u0435\u0440 \u041F\u043E\u0442\u0442\u0435\u0440",
+        year: 2012
+    }
+];
+/**
+ * Текущий индекс последней загруженной книги
+ * @type {number}
+ */ let currentIndex = 0;
+/**
+ * Количество книг, загружаемых за один раз
+ * @constant {number}
+ */ const booksPerLoad = 3;
+/**
+ * DOM элемент контейнера для книг
+ * @constant {HTMLElement}
+ */ const booksContainer = document.getElementById('booksContainer');
+/**
+ * Кнопка "Показать еще" для постраничной загрузки
+ * @constant {HTMLElement}
+ */ const showMoreBtn = document.getElementById('showMoreBtn');
+/**
+ * Кнопка "Показать все" для отображения всех книг сразу
+ * @constant {HTMLElement}
+ */ const showAllBtn = document.getElementById('showAllBtn');
+/**
+ * Создает HTML элемент для отдельной книги
+ * @function createBookElement
+ * @param {Object} book - Объект с информацией о книге
+ * @param {string} book.title - Название книги
+ * @param {string} book.author - Автор книги
+ * @param {number} book.year - Год издания
+ * @returns {HTMLDivElement} Div элемент с форматированной информацией о книге
+ */ function createBookElement(book) {
+    const bookDiv = document.createElement('div');
+    bookDiv.innerHTML = `
+        <strong>${book.title}</strong><br>
+        \u{410}\u{432}\u{442}\u{43E}\u{440}: ${book.author}<br>
+        \u{413}\u{43E}\u{434}: ${book.year}
+        <hr>
+    `;
+    return bookDiv;
+}
+/**
+ * Отображает указанное количество книг, начиная с заданного индекса
+ * @function displayBooks
+ * @param {number} startIndex - Индекс, с которого начинать отображение
+ * @param {number} count - Количество книг для отображения
+ * @description Добавляет новые книги в контейнер и обновляет currentIndex
+ */ function displayBooks(startIndex, count) {
+    const endIndex = Math.min(startIndex + count, books.length);
+    for(let i = startIndex; i < endIndex; i++){
+        const bookElement = createBookElement(books[i]);
+        booksContainer.appendChild(bookElement);
+    }
+    currentIndex = endIndex;
+    if (currentIndex >= books.length) {
+        showMoreBtn.style.display = 'none';
+        showAllBtn.style.display = 'none';
+    }
+}
+/**
+ * Отображает все книги из массива
+ * @function showAllBooks
+ * @description Очищает контейнер и добавляет все книги сразу,
+ *              скрывает кнопки навигации
+ */ function showAllBooks() {
+    booksContainer.innerHTML = '';
+    books.forEach((book)=>{
+        const bookElement = createBookElement(book);
+        booksContainer.appendChild(bookElement);
+    });
+    showMoreBtn.style.display = 'none';
+    showAllBtn.style.display = 'none';
+}
+// Инициализация: отображаем первые 3 книги
+displayBooks(0, booksPerLoad);
+/**
+ * Обработчик кнопки "Показать еще"
+ * @event showMoreBtn#click
+ * @description Добавляет следующую партию книг
+ */ showMoreBtn.addEventListener('click', ()=>{
+    displayBooks(currentIndex, booksPerLoad);
+});
+/**
+ * Обработчик кнопки "Показать все"
+ * @event showAllBtn#click
+ * @description Отображает все книги
+ */ showAllBtn.addEventListener('click', showAllBooks);
+// Скрываем кнопки, если книг меньше, чем загружается за раз
+if (books.length <= booksPerLoad) {
+    showMoreBtn.style.display = 'none';
+    showAllBtn.style.display = 'none';
+}
+
+//# sourceMappingURL=proect.09c5ff12.js.map

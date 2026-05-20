@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: 3dasteroid.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: 3dasteroid.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module 3dasteroid
+ * @description Модуль для отображения 3D модели астероида с использованием Three.js
+ * Создает интерактивную 3D сцену с вращающейся моделью астероида,
+ * поддерживает управление камерой через OrbitControls
+ */
+
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+
+/**
+ * Сцена Three.js для размещения всех 3D объектов
+ * @constant {THREE.Scene}
+ */
+const scene = new THREE.Scene();
+
+/**
+ * Камера для просмотра 3D сцены
+ * @constant {THREE.PerspectiveCamera}
+ * @property {number} fov - Угол обзора (75 градусов)
+ * @property {number} aspect - Соотношение сторон окна
+ */
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+/**
+ * Загруженная 3D модель астероида
+ * @type {THREE.Group|null}
+ */
+let object;
+
+/**
+ * Контроллер для управления камерой (вращение, масштабирование)
+ * @type {OrbitControls|null}
+ */
+let controls;
+
+/**
+ * Имя загружаемой модели (папка в директории models)
+ * @constant {string}
+ */
+let objToRender = 'asteroid';
+
+/**
+ * Загрузчик GLTF моделей
+ * @constant {GLTFLoader}
+ */
+const loader = new GLTFLoader();
+
+/**
+ * Загружает 3D модель астероида из файла scene.gltf
+ * @function loader.load
+ * @param {string} - Путь к модели `./models/asteroid/scene.gltf`
+ * @param {Function} callback - Функция успешной загрузки
+ * @param {Function} progressCallback - Функция отслеживания прогресса
+ * @param {Function} errorCallback - Функция обработки ошибки
+ */
+loader.load(
+  `./models/${objToRender}/scene.gltf`,
+  function (gltf) {
+    object = gltf.scene;
+    scene.add(object);
+    setupUniversalCamera(object);
+  },
+  function (xhr) {
+    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+  },
+  function (error) {
+    console.error(error);
+  }
+);
+
+/**
+ * WebGL рендерер с прозрачным фоном
+ * @constant {THREE.WebGLRenderer}
+ * @property {boolean} alpha - Включена прозрачность фона
+ */
+const renderer = new THREE.WebGLRenderer({ alpha: true }); 
+
+/**
+ * Контейнер для 3D сцены в DOM
+ * @constant {HTMLElement}
+ */
+const container = document.getElementById("container3D");
+
+// Настройка размера рендерера под контейнер
+renderer.setSize(container.clientWidth, container.clientHeight);
+camera.aspect = container.clientWidth / container.clientHeight;
+
+// Добавление рендерера в DOM
+document.getElementById("container3D").appendChild(renderer.domElement);
+
+/**
+ * Направленный источник света сверху
+ * @constant {THREE.DirectionalLight}
+ * @property {number} intensity - Интенсивность света (5)
+ * @property {boolean} castShadow - Включено отбрасывание теней
+ */
+const topLight = new THREE.DirectionalLight(0xffffff, 5);
+topLight.position.set(500, 500, 500);
+topLight.castShadow = true;
+scene.add(topLight);
+
+/**
+ * Фоновое равномерное освещение сцены
+ * @constant {THREE.AmbientLight}
+ * @property {number} intensity - Интенсивность света (1)
+ */
+const ambientLight = new THREE.AmbientLight(0x333333, 1);
+scene.add(ambientLight);
+
+// Инициализация контроллов камеры
+controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+
+/**
+ * Настраивает камеру для оптимального просмотра модели
+ * @function setupUniversalCamera
+ * @param {THREE.Group} model - Загруженная 3D модель
+ * @description Вычисляет bounding box модели и позиционирует камеру,
+ *              чтобы модель полностью помещалась в поле зрения
+ */
+function setupUniversalCamera(model) {
+  const box = new THREE.Box3().setFromObject(model);
+  const size = box.getSize(new THREE.Vector3());
+  const center = box.getCenter(new THREE.Vector3());
+  
+  const maxDim = Math.max(size.x, size.y, size.z);
+  const fov = camera.fov * (Math.PI / 180);
+  const cameraDistance = Math.abs(maxDim / Math.sin(fov / 2));
+  
+  camera.position.z = cameraDistance * 0.6;
+  camera.lookAt(center);
+  
+  controls.target.copy(center);
+  controls.update();
+}
+
+/**
+ * Анимационный цикл рендеринга
+ * @function animate
+ * @description Постоянно обновляет сцену:
+ *              - Вращает модель астероида
+ *              - Обновляет контроллы камеры
+ *              - Перерисовывает сцену
+ */
+function animate() {
+  requestAnimationFrame(animate);
+  if (object) {
+    object.rotation.x += 0.02;
+    object.rotation.y += 0.01;
+  } 
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+/**
+ * Обработчик изменения размера окна
+ * @function window.addEventListener
+ * @description Адаптирует размеры рендерера и пропорции камеры
+ *              при изменении размера окна браузера
+ */
+window.addEventListener("resize", function () {
+  const container = document.getElementById("container3D");
+  camera.aspect = container.clientWidth / container.clientHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  controls.update();
+});
+
+// Запуск анимации
+animate();</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-3dasteroid.html">3dasteroid</a></li><li><a href="module-3dkomet.html">3dkomet</a></li><li><a href="module-book.html">book</a></li><li><a href="module-capcha.html">capcha</a></li><li><a href="module-solar-system.html">solar-system</a></li><li><a href="module-stars.html">stars</a></li><li><a href="module-telescope.html">telescope</a></li><li><a href="module-textcart.html">textcart</a></li></ul><h3>Events</h3><ul><li><a href="canvas.html#event:mouseenter">mouseenter</a></li><li><a href="canvas.html#event:mouseleave">mouseleave</a></li><li><a href="canvas.html#event:mousemove">mousemove</a></li><li><a href="module-textcart.html#~event:DOMContentLoaded">DOMContentLoaded</a></li><li><a href="showAllBtn.html#event:click">click</a></li><li><a href="showMoreBtn.html#event:click">click</a></li><li><a href="submitBtn.html#event:click">click</a></li><li><a href="userInput.html#event:input">input</a></li><li><a href="window.html#event:resize">resize</a></li><li><a href="zoomInBtn.html#event:click">click</a></li><li><a href="zoomOutBtn.html#event:click">click</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sat May 16 2026 10:44:39 GMT+0300 (Москва, стандартное время)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

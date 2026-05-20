@@ -1,17 +1,54 @@
-import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
-import { OrbitControls } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/OrbitControls.js";
-import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
+/**
+ * @module 3dkomet
+ * @description Модуль для отображения 3D модели кометы с использованием Three.js
+ * Аналогичен модулю астероида, но использует другую модель (iceblock)
+ * и имеет другие настройки камеры
+ */
 
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
+/**
+ * Сцена Three.js
+ * @constant {THREE.Scene}
+ */
 const scene = new THREE.Scene();
+
+/**
+ * Камера для просмотра 3D модели кометы
+ * @constant {THREE.PerspectiveCamera}
+ */
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
+/**
+ * Загруженная 3D модель кометы
+ * @type {THREE.Group|null}
+ */
 let object;
+
+/**
+ * Контроллер управления камерой
+ * @type {OrbitControls|null}
+ */
 let controls;
+
+/**
+ * Имя папки с моделью кометы
+ * @constant {string}
+ */
 let objToRender = 'iceblock';
 
+/**
+ * Загрузчик GLTF моделей
+ * @constant {GLTFLoader}
+ */
 const loader = new GLTFLoader();
 
+/**
+ * Загрузка модели кометы из папки ./models/iceblock/
+ * @function loader.load
+ */
 loader.load(
   `./models/${objToRender}/scene.gltf`,
   function (gltf) {
@@ -27,25 +64,47 @@ loader.load(
   }
 );
 
+/**
+ * WebGL рендерер с прозрачным фоном
+ * @constant {THREE.WebGLRenderer}
+ */
 const renderer = new THREE.WebGLRenderer({ alpha: true }); 
 
+/**
+ * DOM контейнер для 3D сцены
+ * @constant {HTMLElement}
+ */
 const container = document.getElementById("container3D");
 renderer.setSize(container.clientWidth, container.clientHeight);
 camera.aspect = container.clientWidth / container.clientHeight;
 
 document.getElementById("container3D").appendChild(renderer.domElement);
 
+/**
+ * Направленный источник света
+ * @constant {THREE.DirectionalLight}
+ */
 const topLight = new THREE.DirectionalLight(0xffffff, 5);
-topLight.position.set(500, 500, 500) 
+topLight.position.set(500, 500, 500);
 topLight.castShadow = true;
 scene.add(topLight);
 
+/**
+ * Фоновое освещение
+ * @constant {THREE.AmbientLight}
+ */
 const ambientLight = new THREE.AmbientLight(0x333333, 1);
 scene.add(ambientLight);
 
 controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
+/**
+ * Настройка камеры для модели кометы
+ * @function setupUniversalCamera
+ * @param {THREE.Group} model - 3D модель кометы
+ * @description Расстояние до камеры меньше (0.5), чем для астероида (0.6)
+ */
 function setupUniversalCamera(model) {
   const box = new THREE.Box3().setFromObject(model);
   const size = box.getSize(new THREE.Vector3());
@@ -62,6 +121,11 @@ function setupUniversalCamera(model) {
   controls.update();
 }
 
+/**
+ * Анимационный цикл
+ * @function animate
+ * @description Вращает модель кометы и обновляет сцену
+ */
 function animate() {
   requestAnimationFrame(animate);
   if (object) {
@@ -72,6 +136,10 @@ function animate() {
   renderer.render(scene, camera);
 }
 
+/**
+ * Обработчик изменения размера окна
+ * @function resize
+ */
 window.addEventListener("resize", function () {
   const container = document.getElementById("container3D");
   camera.aspect = container.clientWidth / container.clientHeight;

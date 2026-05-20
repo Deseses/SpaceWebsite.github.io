@@ -1,0 +1,1 @@
+function truncate(t,e){return t.length>e?t.slice(0,e-1)+"…":t}document.addEventListener("DOMContentLoaded",function(){document.querySelectorAll(".card-desc").forEach(t=>{let e=t.textContent;t.textContent=truncate(e,100)})});

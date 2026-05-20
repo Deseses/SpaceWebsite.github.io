@@ -1,3 +1,16 @@
+/**
+ * @module book
+ * @description Модуль для отображения списка научно-популярных книг о космосе
+ * Поддерживает постраничную загрузку книг и функцию "показать все"
+ */
+
+/**
+ * Массив книг о космосе и астрономии
+ * @constant {Array<Object>} books
+ * @property {string} title - Название книги
+ * @property {string} author - Автор книги
+ * @property {number} year - Год издания
+ */
 const books = [
     { title: "Краткая история времени", author: "Стивен Хокинг", year: 2022 },
     { title: "Космос", author: "Карл Саган", year: 2020 },
@@ -27,12 +40,45 @@ const books = [
     { title: "Вы находитесь здесь. Карманная история вселенной", author: "Кристофер Поттер", year: 2012 },
 ];
 
+/**
+ * Текущий индекс последней загруженной книги
+ * @type {number}
+ */
 let currentIndex = 0;
+
+/**
+ * Количество книг, загружаемых за один раз
+ * @constant {number}
+ */
 const booksPerLoad = 3;
+
+/**
+ * DOM элемент контейнера для книг
+ * @constant {HTMLElement}
+ */
 const booksContainer = document.getElementById('booksContainer');
+
+/**
+ * Кнопка "Показать еще" для постраничной загрузки
+ * @constant {HTMLElement}
+ */
 const showMoreBtn = document.getElementById('showMoreBtn');
+
+/**
+ * Кнопка "Показать все" для отображения всех книг сразу
+ * @constant {HTMLElement}
+ */
 const showAllBtn = document.getElementById('showAllBtn');
 
+/**
+ * Создает HTML элемент для отдельной книги
+ * @function createBookElement
+ * @param {Object} book - Объект с информацией о книге
+ * @param {string} book.title - Название книги
+ * @param {string} book.author - Автор книги
+ * @param {number} book.year - Год издания
+ * @returns {HTMLDivElement} Div элемент с форматированной информацией о книге
+ */
 function createBookElement(book) {
     const bookDiv = document.createElement('div');
     bookDiv.innerHTML = `
@@ -44,6 +90,13 @@ function createBookElement(book) {
     return bookDiv;
 }
 
+/**
+ * Отображает указанное количество книг, начиная с заданного индекса
+ * @function displayBooks
+ * @param {number} startIndex - Индекс, с которого начинать отображение
+ * @param {number} count - Количество книг для отображения
+ * @description Добавляет новые книги в контейнер и обновляет currentIndex
+ */
 function displayBooks(startIndex, count) {
     const endIndex = Math.min(startIndex + count, books.length);
     
@@ -60,6 +113,12 @@ function displayBooks(startIndex, count) {
     }
 }
 
+/**
+ * Отображает все книги из массива
+ * @function showAllBooks
+ * @description Очищает контейнер и добавляет все книги сразу,
+ *              скрывает кнопки навигации
+ */
 function showAllBooks() {
     booksContainer.innerHTML = '';
     books.forEach(book => {
@@ -70,14 +129,26 @@ function showAllBooks() {
     showAllBtn.style.display = 'none';
 }
 
+// Инициализация: отображаем первые 3 книги
 displayBooks(0, booksPerLoad);
 
+/**
+ * Обработчик кнопки "Показать еще"
+ * @event showMoreBtn#click
+ * @description Добавляет следующую партию книг
+ */
 showMoreBtn.addEventListener('click', () => {
     displayBooks(currentIndex, booksPerLoad);
 });
 
+/**
+ * Обработчик кнопки "Показать все"
+ * @event showAllBtn#click
+ * @description Отображает все книги
+ */
 showAllBtn.addEventListener('click', showAllBooks);
 
+// Скрываем кнопки, если книг меньше, чем загружается за раз
 if (books.length <= booksPerLoad) {
     showMoreBtn.style.display = 'none';
     showAllBtn.style.display = 'none';

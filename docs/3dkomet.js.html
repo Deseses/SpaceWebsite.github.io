@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: 3dkomet.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: 3dkomet.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module 3dkomet
+ * @description Модуль для отображения 3D модели кометы с использованием Three.js
+ * Аналогичен модулю астероида, но использует другую модель (iceblock)
+ * и имеет другие настройки камеры
+ */
+
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+
+/**
+ * Сцена Three.js
+ * @constant {THREE.Scene}
+ */
+const scene = new THREE.Scene();
+
+/**
+ * Камера для просмотра 3D модели кометы
+ * @constant {THREE.PerspectiveCamera}
+ */
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+/**
+ * Загруженная 3D модель кометы
+ * @type {THREE.Group|null}
+ */
+let object;
+
+/**
+ * Контроллер управления камерой
+ * @type {OrbitControls|null}
+ */
+let controls;
+
+/**
+ * Имя папки с моделью кометы
+ * @constant {string}
+ */
+let objToRender = 'iceblock';
+
+/**
+ * Загрузчик GLTF моделей
+ * @constant {GLTFLoader}
+ */
+const loader = new GLTFLoader();
+
+/**
+ * Загрузка модели кометы из папки ./models/iceblock/
+ * @function loader.load
+ */
+loader.load(
+  `./models/${objToRender}/scene.gltf`,
+  function (gltf) {
+    object = gltf.scene;
+    scene.add(object);
+    setupUniversalCamera(object);
+  },
+  function (xhr) {
+    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+  },
+  function (error) {
+    console.error(error);
+  }
+);
+
+/**
+ * WebGL рендерер с прозрачным фоном
+ * @constant {THREE.WebGLRenderer}
+ */
+const renderer = new THREE.WebGLRenderer({ alpha: true }); 
+
+/**
+ * DOM контейнер для 3D сцены
+ * @constant {HTMLElement}
+ */
+const container = document.getElementById("container3D");
+renderer.setSize(container.clientWidth, container.clientHeight);
+camera.aspect = container.clientWidth / container.clientHeight;
+
+document.getElementById("container3D").appendChild(renderer.domElement);
+
+/**
+ * Направленный источник света
+ * @constant {THREE.DirectionalLight}
+ */
+const topLight = new THREE.DirectionalLight(0xffffff, 5);
+topLight.position.set(500, 500, 500);
+topLight.castShadow = true;
+scene.add(topLight);
+
+/**
+ * Фоновое освещение
+ * @constant {THREE.AmbientLight}
+ */
+const ambientLight = new THREE.AmbientLight(0x333333, 1);
+scene.add(ambientLight);
+
+controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+
+/**
+ * Настройка камеры для модели кометы
+ * @function setupUniversalCamera
+ * @param {THREE.Group} model - 3D модель кометы
+ * @description Расстояние до камеры меньше (0.5), чем для астероида (0.6)
+ */
+function setupUniversalCamera(model) {
+  const box = new THREE.Box3().setFromObject(model);
+  const size = box.getSize(new THREE.Vector3());
+  const center = box.getCenter(new THREE.Vector3());
+  
+  const maxDim = Math.max(size.x, size.y, size.z);
+  const fov = camera.fov * (Math.PI / 180);
+  const cameraDistance = Math.abs(maxDim / Math.sin(fov / 2));
+  
+  camera.position.z = cameraDistance * 0.5;
+  camera.lookAt(center);
+  
+  controls.target.copy(center);
+  controls.update();
+}
+
+/**
+ * Анимационный цикл
+ * @function animate
+ * @description Вращает модель кометы и обновляет сцену
+ */
+function animate() {
+  requestAnimationFrame(animate);
+  if (object) {
+    object.rotation.x += 0.02;
+    object.rotation.y += 0.01;
+  } 
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+/**
+ * Обработчик изменения размера окна
+ * @function resize
+ */
+window.addEventListener("resize", function () {
+  const container = document.getElementById("container3D");
+  camera.aspect = container.clientWidth / container.clientHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  controls.update();
+});
+
+animate();</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-3dasteroid.html">3dasteroid</a></li><li><a href="module-3dkomet.html">3dkomet</a></li><li><a href="module-book.html">book</a></li><li><a href="module-capcha.html">capcha</a></li><li><a href="module-solar-system.html">solar-system</a></li><li><a href="module-stars.html">stars</a></li><li><a href="module-telescope.html">telescope</a></li><li><a href="module-textcart.html">textcart</a></li></ul><h3>Events</h3><ul><li><a href="canvas.html#event:mouseenter">mouseenter</a></li><li><a href="canvas.html#event:mouseleave">mouseleave</a></li><li><a href="canvas.html#event:mousemove">mousemove</a></li><li><a href="module-textcart.html#~event:DOMContentLoaded">DOMContentLoaded</a></li><li><a href="showAllBtn.html#event:click">click</a></li><li><a href="showMoreBtn.html#event:click">click</a></li><li><a href="submitBtn.html#event:click">click</a></li><li><a href="userInput.html#event:input">input</a></li><li><a href="window.html#event:resize">resize</a></li><li><a href="zoomInBtn.html#event:click">click</a></li><li><a href="zoomOutBtn.html#event:click">click</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sat May 16 2026 10:44:39 GMT+0300 (Москва, стандартное время)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

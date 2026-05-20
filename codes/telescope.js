@@ -1,4 +1,17 @@
-// Получаем элементы DOM
+/**
+ * @module telescope
+ * @description Модуль интерактивного телескопа для наблюдения за звездным небом
+ * Создает canvas с анимированными звездами, кометами и астероидами,
+ * позволяет увеличивать изображение под курсором мыши
+ */
+
+/**
+ * DOM элементы управления
+ * @constant {HTMLCanvasElement} canvas - Холст для рисования звездного неба
+ * @constant {CanvasRenderingContext2D} ctx - 2D контекст рисования
+ * @constant {HTMLElement} telescope - Элемент "телескоп" (лупа)
+ * @constant {HTMLElement} telescopeView - Вьюпорт телескопа
+ */
 const canvas = document.getElementById('starfield');
 const ctx = canvas.getContext('2d');
 const telescope = document.getElementById('telescope');
@@ -7,19 +20,80 @@ const zoomInBtn = document.getElementById('zoom-in');
 const zoomOutBtn = document.getElementById('zoom-out');
 const zoomValue = document.getElementById('zoom-value');
 
-// Настройки
+/**
+ * Массив звезд
+ * @type {Array<Object>}
+ * @property {number} x - Координата X
+ * @property {number} y - Координата Y
+ * @property {number} size - Размер звезды
+ * @property {number} brightness - Яркость звезды
+ * @property {number} twinkleSpeed - Скорость мерцания
+ * @property {number} twinkleOffset - Фаза мерцания
+ */
 let stars = [];
+
+/**
+ * Массив комет
+ * @type {Array<Object>}
+ * @property {number} x - Координата X
+ * @property {number} y - Координата Y
+ * @property {number} size - Размер кометы
+ * @property {number} speedX - Скорость по X
+ * @property {number} speedY - Скорость по Y
+ * @property {number} tailLength - Длина хвоста
+ * @property {string} color - Цвет кометы
+ */
 let comets = [];
+
+/**
+ * Массив астероидов
+ * @type {Array<Object>}
+ * @property {number} x - Координата X
+ * @property {number} y - Координата Y
+ * @property {number} size - Размер астероида
+ * @property {number} speedX - Скорость по X
+ * @property {number} speedY - Скорость по Y
+ * @property {number} rotation - Текущий угол поворота
+ * @property {number} rotationSpeed - Скорость вращения
+ */
 let asteroids = [];
+
+/**
+ * Позиция курсора мыши
+ * @type {number}
+ */
 let mouseX = 0;
 let mouseY = 0;
+
+/**
+ * Размер телескопа в пикселях
+ * @type {number}
+ */
 let telescopeSize = 200;
+
+/**
+ * Текущий уровень увеличения
+ * @type {number}
+ */
 let zoomLevel = 1;
+
+/**
+ * Границы зума
+ * @constant {number}
+ */
 const maxZoom = 8;
 const minZoom = 0.5;
+
+/**
+ * ID анимационного фрейма
+ * @type {number}
+ */
 let animationId;
 
-// Инициализация канваса
+/**
+ * Инициализирует canvas и создает объекты
+ * @function initCanvas
+ */
 function initCanvas() {
     const container = document.querySelector('.telescope-container');
     canvas.width = container.clientWidth;
@@ -32,7 +106,11 @@ function initCanvas() {
     animate();
 }
 
-// Создание звезд
+/**
+ * Создает массив звезд
+ * @function createStars
+ * @description Генерирует 1500 звезд со случайными параметрами
+ */
 function createStars() {
     const starCount = 1500;
     stars = [];
@@ -49,7 +127,11 @@ function createStars() {
     }
 }
 
-// Создание комет
+/**
+ * Создает массив комет
+ * @function createComets
+ * @description Генерирует 6 комет со случайными параметрами движения
+ */
 function createComets() {
     const cometCount = 6;
     comets = [];
@@ -67,7 +149,11 @@ function createComets() {
     }
 }
 
-// Создание астероидов
+/**
+ * Создает массив астероидов
+ * @function createAsteroids
+ * @description Генерирует 20 астероидов неправильной формы
+ */
 function createAsteroids() {
     const asteroidCount = 20;
     asteroids = [];
@@ -86,13 +172,17 @@ function createAsteroids() {
     }
 }
 
-// Отрисовка звездного неба
+/**
+ * Отрисовывает звездное небо
+ * @function drawStars
+ * @param {number} time - Текущее время для анимации мерцания
+ * @description Рисует звезды с эффектом мерцания, кометы с хвостами
+ *              и астероиды неправильной формы
+ */
 function drawStars(time) {
-    // Очищаем экран
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Рисуем звезды с мерцанием
     stars.forEach(star => {
         const twinkle = Math.sin(time * star.twinkleSpeed + star.twinkleOffset) * 0.3 + 0.7;
         ctx.beginPath();
@@ -101,9 +191,7 @@ function drawStars(time) {
         ctx.fill();
     });
     
-    // Рисуем кометы
     comets.forEach(comet => {
-        // Хвост кометы
         ctx.beginPath();
         ctx.moveTo(comet.x, comet.y);
         ctx.lineTo(
@@ -114,20 +202,17 @@ function drawStars(time) {
         ctx.lineWidth = 2;
         ctx.stroke();
         
-        // Ядро кометы
         ctx.beginPath();
         ctx.arc(comet.x, comet.y, comet.size, 0, Math.PI * 2);
         ctx.fillStyle = comet.color;
         ctx.fill();
     });
     
-    // Рисуем астероиды
     asteroids.forEach(asteroid => {
         ctx.save();
         ctx.translate(asteroid.x, asteroid.y);
         ctx.rotate(asteroid.rotation);
         
-        // Неровная форма астероида
         ctx.beginPath();
         ctx.moveTo(0, -asteroid.size);
         ctx.lineTo(asteroid.size * 0.7, -asteroid.size * 0.5);
@@ -143,27 +228,28 @@ function drawStars(time) {
     });
 }
 
-// Обновление позиций комет и астероидов
+/**
+ * Обновляет позиции движущихся объектов
+ * @function updatePositions
+ * @description Перемещает кометы и астероиды, возвращает их на экран
+ *              при выходе за границы
+ */
 function updatePositions() {
-    // Обновляем позиции комет
     comets.forEach(comet => {
         comet.x += comet.speedX;
         comet.y += comet.speedY;
         
-        // Если комета вышла за границы, возвращаем ее
         if (comet.x < -50) comet.x = canvas.width + 50;
         if (comet.x > canvas.width + 50) comet.x = -50;
         if (comet.y < -50) comet.y = canvas.height + 50;
         if (comet.y > canvas.height + 50) comet.y = -50;
     });
     
-    // Обновляем позиции астероидов
     asteroids.forEach(asteroid => {
         asteroid.x += asteroid.speedX;
         asteroid.y += asteroid.speedY;
         asteroid.rotation += asteroid.rotationSpeed;
         
-        // Если астероид вышел за границы, возвращаем его
         if (asteroid.x < -30) asteroid.x = canvas.width + 30;
         if (asteroid.x > canvas.width + 30) asteroid.x = -30;
         if (asteroid.y < -30) asteroid.y = canvas.height + 30;
@@ -171,19 +257,29 @@ function updatePositions() {
     });
 }
 
-// Анимация
+/**
+ * Анимационный цикл
+ * @function animate
+ * @param {number} time - Текущее время
+ * @description Обновляет позиции, перерисовывает сцену,
+ *              обновляет вид телескопа
+ */
 function animate(time) {
     updatePositions();
     drawStars(time * 0.001);
     animationId = requestAnimationFrame(animate);
     
-    // Обновляем телескоп, если он активен
     if (telescope.style.display === 'block') {
         updateTelescope();
     }
 }
 
-// Обновление позиции телескопа
+/**
+ * Обновляет отображение телескопа (лупы)
+ * @function updateTelescope
+ * @description Позиционирует лупу под курсором и отображает
+ *              увеличенную область звездного неба
+ */
 function updateTelescope() {
     telescope.style.display = 'block';
     telescope.style.left = `${mouseX}px`;
@@ -191,25 +287,21 @@ function updateTelescope() {
     telescope.style.width = `${telescopeSize}px`;
     telescope.style.height = `${telescopeSize}px`;
     
-    // Создаем канвас для увеличенного вида
     const viewCanvas = document.createElement('canvas');
     const viewCtx = viewCanvas.getContext('2d');
     viewCanvas.width = telescopeSize;
     viewCanvas.height = telescopeSize;
     
-    // Вычисляем область для увеличения
     const zoomAreaSize = telescopeSize / zoomLevel;
     const zoomX = mouseX - zoomAreaSize / 2;
     const zoomY = mouseY - zoomAreaSize / 2;
     
-    // Рисуем увеличенную область
     viewCtx.drawImage(
         canvas, 
         zoomX, zoomY, zoomAreaSize, zoomAreaSize,
         0, 0, telescopeSize, telescopeSize
     );
     
-    // Добавляем эффект линзы
     const gradient = viewCtx.createRadialGradient(
         telescopeSize/2, telescopeSize/2, 0,
         telescopeSize/2, telescopeSize/2, telescopeSize/2
@@ -220,12 +312,14 @@ function updateTelescope() {
     viewCtx.fillStyle = gradient;
     viewCtx.fillRect(0, 0, telescopeSize, telescopeSize);
     
-    // Очищаем и добавляем новый канвас
     telescopeView.innerHTML = '';
     telescopeView.appendChild(viewCanvas);
 }
 
-// Обработчики событий
+/**
+ * Обработчик движения мыши по canvas
+ * @event canvas#mousemove
+ */
 canvas.addEventListener('mousemove', (e) => {
     const rect = canvas.getBoundingClientRect();
     mouseX = e.clientX - rect.left;
@@ -233,15 +327,27 @@ canvas.addEventListener('mousemove', (e) => {
     updateTelescope();
 });
 
+/**
+ * Обработчик входа мыши в canvas
+ * @event canvas#mouseenter
+ */
 canvas.addEventListener('mouseenter', () => {
     telescope.style.display = 'block';
     updateTelescope();
 });
 
+/**
+ * Обработчик выхода мыши из canvas
+ * @event canvas#mouseleave
+ */
 canvas.addEventListener('mouseleave', () => {
     telescope.style.display = 'none';
 });
 
+/**
+ * Обработчик увеличения зума
+ * @event zoomInBtn#click
+ */
 zoomInBtn.addEventListener('click', () => {
     if (zoomLevel < maxZoom) {
         zoomLevel += 0.5;
@@ -250,6 +356,10 @@ zoomInBtn.addEventListener('click', () => {
     }
 });
 
+/**
+ * Обработчик уменьшения зума
+ * @event zoomOutBtn#click
+ */
 zoomOutBtn.addEventListener('click', () => {
     if (zoomLevel > minZoom) {
         zoomLevel -= 0.5;
@@ -258,6 +368,10 @@ zoomOutBtn.addEventListener('click', () => {
     }
 });
 
+/**
+ * Обработчик изменения размера окна
+ * @event window#resize
+ */
 window.addEventListener('resize', () => {
     const container = document.querySelector('.telescope-container');
     canvas.width = container.clientWidth;
@@ -267,5 +381,4 @@ window.addEventListener('resize', () => {
     createAsteroids();
 });
 
-// Инициализация
 initCanvas();
