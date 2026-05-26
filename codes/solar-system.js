@@ -5,9 +5,6 @@
  * Использует Three.js для рендеринга и OrbitControls для управления камерой
  */
 
-import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-
 /**
  * Сцена Three.js
  * @constant {THREE.Scene}
@@ -38,7 +35,7 @@ document.body.appendChild(renderer.domElement);
  * @property {boolean} enableDamping - Включена инерция
  * @property {number} dampingFactor - Фактор инерции (0.05)
  */
-const controls = new OrbitControls(camera, renderer.domElement);
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
 
